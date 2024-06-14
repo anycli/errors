@@ -8,7 +8,7 @@ import {OclifError, CLIError} from './errors/cli'
 export const handle = (err: Error & Partial<PrettyPrintableError> & Partial<OclifError>) => {
   try {
     if (!err) err = new CLIError('no error?')
-    if (err.message === 'SIGINT') process.exit(1)
+    if (err.message === 'SIGINT') process.exitCode = 1
 
     const shouldPrint = !(err.code === 'EEXIT')
     const pretty = prettyPrint(err)
@@ -26,12 +26,12 @@ export const handle = (err: Error & Partial<PrettyPrintableError> & Partial<Ocli
       }
 
       config.errorLogger.flush()
-      .then(() => process.exit(exitCode))
+      .then(() => process.exitCode = exitCode)
       .catch(console.error)
-    } else process.exit(exitCode)
+    } else process.exitCode = exitCode
   } catch (error) {
     console.error(err.stack)
     console.error(error.stack)
-    process.exit(1)
+    process.exitCode = 1
   }
 }
